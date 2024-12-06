@@ -17,7 +17,7 @@ var services = new ServiceCollection()
 // SCOPE
 using (var scope = provider.CreateScope())
 {
-    // Override the implementation for this scope
+    // Override the service implementation for this scope
     scope.Override<IExampleService1, ExampleService1B>();
 
     // Testing the override
