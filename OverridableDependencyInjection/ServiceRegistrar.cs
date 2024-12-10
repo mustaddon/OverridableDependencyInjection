@@ -21,7 +21,7 @@ internal static class ServiceRegistrar
                 && !TryRegister(services, [type.GetGenericTypeDefinition()]).Any())
                 continue;
 
-            throw new ArgumentException($"'{type}' cannot be overridable (service is not registered in IServiceCollection).");
+            throw new ArgumentException($"'{type}' is not registered in IServiceCollection. Please register the service before adding overridability.");
         }
     }
 

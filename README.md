@@ -1,4 +1,4 @@
-# OverridableDependencyInjection [![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?7)](http://badge.fury.io/nu/OverridableDependencyInjection)
+# OverridableDependencyInjection [![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?101)](http://badge.fury.io/nu/OverridableDependencyInjection)
 Overridable injections for Microsoft.Extensions.DependencyInjection.
 
 ### Example
@@ -8,7 +8,7 @@ var services = new ServiceCollection()
     .AddTransient<IExampleService1, ExampleService1A>()
     
     // REQUIRED: Adds override capability for IExampleService1
-    .AddOverridable(typeof(IExampleService1))
+    .AddOverridability(typeof(IExampleService1))
 
     .BuildServiceProvider();
 

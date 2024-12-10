@@ -7,7 +7,7 @@ var provider = new ServiceCollection()
     .AddTransient(typeof(IExampleService3<>), typeof(ExampleService3A<>))
 
     // REQUIRED: Adds override capability for selected types
-    .AddOverridable(typeof(IExampleService1), typeof(IExampleService3<>))
+    .AddOverridability(typeof(IExampleService1), typeof(IExampleService3<>))
 
     .BuildServiceProvider();
 
