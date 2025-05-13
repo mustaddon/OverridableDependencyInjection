@@ -4,7 +4,7 @@ Overridable injections for Microsoft.Extensions.DependencyInjection.
 ### Example
 
 ```C#
-var services = new ServiceCollection()
+var provider = new ServiceCollection()
     .AddTransient<IExampleService1, ExampleService1A>()
     
     // REQUIRED: Adds override capability for IExampleService1
