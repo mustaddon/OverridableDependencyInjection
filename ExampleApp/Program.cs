@@ -30,6 +30,7 @@ using (var scope = provider.CreateScope())
         .SomeMethod("test 3A"));
 }
 
+Console.WriteLine();
 
 
 // SCOPE 2: with overrides
@@ -52,6 +53,7 @@ using (var scope = provider.CreateScope())
         .SomeMethod("test 3B"));
 }
 
+Console.WriteLine();
 
 
 // SCOPE 3: with overrides

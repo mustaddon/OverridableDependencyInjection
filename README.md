@@ -1,4 +1,4 @@
-# OverridableDependencyInjection [![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?101)](http://badge.fury.io/nu/OverridableDependencyInjection)
+# OverridableDependencyInjection [![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?102)](http://badge.fury.io/nu/OverridableDependencyInjection)
 Overridable injections for Microsoft.Extensions.DependencyInjection.
 
 ### Example
