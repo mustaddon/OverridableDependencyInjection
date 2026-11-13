@@ -1,4 +1,5 @@
-﻿# OverridableDependencyInjection [![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?102)](https://badge.fury.io/nu/OverridableDependencyInjection)
+﻿# OverridableDependencyInjection 
+[![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?104)](https://badge.fury.io/nu/OverridableDependencyInjection)
 
 A small extension for `Microsoft.Extensions.DependencyInjection` that lets you override registered services inside a specific scope without changing the root container configuration.
 
