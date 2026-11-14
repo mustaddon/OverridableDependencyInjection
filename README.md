@@ -1,16 +1,17 @@
 ﻿# OverridableDependencyInjection 
 [![NuGet version](https://badge.fury.io/nu/OverridableDependencyInjection.svg?104)](https://badge.fury.io/nu/OverridableDependencyInjection)
 
-A small extension for `Microsoft.Extensions.DependencyInjection` that lets you override registered services inside a specific scope without changing the root container configuration.
+A .NET extension for `Microsoft.Extensions.DependencyInjection` that lets you substitute a registered service within one `IServiceScope` without changing the root provider or its registrations.
 
-This is useful for tests, request-specific behavior, and temporary substitutions when you need a different implementation for a single unit of work.
+Use it for test doubles, request-specific behavior, or temporary implementations within a unit of work. Overrides can be supplied by implementation type, instance, or factory. Regular services, keyed services, and open generic interfaces are supported.
 
-## Why use it?
+## Features
 
-- Override a service only for one `IServiceScope`
-- Keep the original registrations intact for the rest of the app
-- Works with regular services, keyed services, and open generic interfaces
-- Very lightweight integration with `ServiceCollection`
+- Substitute a service for one scope without rebuilding the root provider
+- Keep the original registration available outside that scope
+- Override regular, keyed, and open generic interface services
+- Choose an implementation type, provide an instance, or create one with a factory
+- Integrate with the familiar `ServiceCollection` and `IServiceScope` APIs
 
 ## Installation
 
@@ -23,12 +24,10 @@ dotnet add package OverridableDependencyInjection
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
 
-var provider = new ServiceCollection()
+using var provider = new ServiceCollection()
     .AddTransient<IExampleService1, ExampleService1A>()
     .AddTransient<IExampleService2, ExampleService2>()
-
-    // Mark which services may be overridden
-    .AddOverridability(typeof(IExampleService1))
+    .AddOverridability<IExampleService1>()
     .BuildServiceProvider();
 
 using (var scope = provider.CreateScope())
@@ -38,6 +37,9 @@ using (var scope = provider.CreateScope())
     var service = scope.ServiceProvider.GetRequiredService<IExampleService1>();
     Console.WriteLine(service is ExampleService1B); // True
 }
+
+// The root provider still resolves the original registration.
+Console.WriteLine(provider.GetRequiredService<IExampleService1>() is ExampleService1A); // True
 ```
 
 ## Basic API
@@ -66,11 +68,17 @@ using var scope = provider.CreateScope();
 scope.Override<IWeatherService, FakeWeatherService>();
 ```
 
-You can also override by instance or factory:
+Alternatively, provide an instance:
 
 ```csharp
 scope.Override<IWeatherService>(new FakeWeatherService());
-scope.Override<IWeatherService>(_ => new FakeWeatherService());
+```
+
+Or create the override with a factory. The factory receives the current scope's service provider, so it can resolve scoped dependencies:
+
+```csharp
+scope.Override<IWeatherService>(services =>
+    new FakeWeatherService(services.GetRequiredService<IWeatherData>()));
 ```
 
 ### Override a service type directly
@@ -81,7 +89,7 @@ scope.Override(typeof(IWeatherService), typeof(FakeWeatherService));
 
 ## Open generic support
 
-This library also supports open generic interfaces:
+Open generic interface registrations can also be overridden. Register the open generic service type with `AddOverridability`:
 
 ```csharp
 var provider = new ServiceCollection()
@@ -95,7 +103,7 @@ scope.Override(typeof(IRepository<>), typeof(FakeRepository<>));
 
 ## Keyed services
 
-Keyed overrides are supported as well:
+Keyed overrides target the specified key; other keys and unkeyed registrations are not changed:
 
 ```csharp
 var provider = new ServiceCollection()
@@ -109,10 +117,11 @@ scope.OverrideKeyed<IExampleService, ExampleServiceB>("primary");
 
 ## Important behavior
 
-- `AddOverridability(...)` must be called before `BuildServiceProvider()`.
-- Overrides are scoped to the lifetime of the `IServiceScope`.
-- The original registration remains available outside that scope.
-- Only service types registered with `AddOverridability` can be overridden.
+- Register the service first, then call `AddOverridability(...)`, and only then build the provider.
+- An override affects resolutions from the scope where it was configured; dispose the scope when the override is no longer needed.
+- Other scopes and the root provider continue to use the original registrations.
+- Only service types enabled with `AddOverridability` can be overridden.
+- Open generic overrides require an open generic interface registration.
 
 ## Example application
 

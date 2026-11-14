@@ -63,31 +63,31 @@ internal static class ServiceRegistrar
 
     static ServiceDescriptor CreateProxyDescriptor(IServiceCollection services, ServiceDescriptor descriptor, object serviceKey)
     {
-        if (descriptor.ServiceType.IsGenericType && descriptor.ServiceType.IsGenericTypeDefinition)
-            return GenericProxyDescriptor(services, descriptor, serviceKey);
+        // If the service type is not an open generic or an interface that implements IDisposable, we create a factory to handle overrides.
+        if (!(descriptor.ServiceType.IsGenericType && descriptor.ServiceType.IsGenericTypeDefinition)
+            && !(descriptor.ServiceType.IsInterface && typeof(IDisposable).IsAssignableFrom(descriptor.ServiceType)))
+            return new ServiceDescriptor(
+                descriptor.ServiceType,
+                descriptor.ServiceKey,
+                (s, k) => s.GetOverridedService(descriptor.ServiceType, descriptor.ServiceKey, serviceKey, descriptor.Lifetime),
+                ServiceLifetime.Transient);
 
-        return new ServiceDescriptor(
-            descriptor.ServiceType,
-            descriptor.ServiceKey,
-            (s, k) => s.GetOverridedService(descriptor.ServiceType, descriptor.ServiceKey, serviceKey),
-            ServiceLifetime.Transient);
-    }
 
-    static ServiceDescriptor GenericProxyDescriptor(IServiceCollection services, ServiceDescriptor descriptor, object serviceKey)
-    {
         if (!descriptor.ServiceType.IsInterface)
             throw new ArgumentException($"'{descriptor.ServiceType}' is not interface (overridable open-generic service must be an interface).");
 
         var proxyType = ProxyFactory.CreateType(descriptor.ServiceType,
             new CustomAttributeBuilder(typeof(FromKeyedServicesAttribute).GetConstructor([typeof(object)])!, [serviceKey]));
 
-        services.AddKeyedTransient(serviceKey, (s, k) => ProxyHandlerFactory.Create(s, descriptor.ServiceType, descriptor.ServiceKey, serviceKey));
+        services.AddKeyedTransient(serviceKey, (s, k) => ProxyHandlerFactory.Create(s, descriptor.ServiceType, descriptor.ServiceKey, serviceKey, descriptor.Lifetime));
 
         return new ServiceDescriptor(
             descriptor.ServiceType,
             descriptor.ServiceKey,
             proxyType,
-            descriptor.Lifetime);
+            descriptor.ServiceType.IsGenericTypeDefinition 
+                ? descriptor.Lifetime 
+                : ServiceLifetime.Transient);
     }
 
     static ServiceDescriptor CreateSourceDescriptor(ServiceDescriptor descriptor, object serviceKey)

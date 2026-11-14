@@ -7,17 +7,17 @@
 	<LangVersion>latest</LangVersion>
     <SignAssembly>true</SignAssembly>
 	<AssemblyOriginatorKeyFile>..\OverridableDependencyInjection.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
-    <FileVersion>1.0.5</FileVersion>
-    <Version>1.0.5</Version>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
+    <Version>1.1.0</Version>
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2026</Copyright>
     <PackageId>OverridableDependencyInjection</PackageId>
     <Product>OverridableDependencyInjection</Product>
     <Title>OverridableDependencyInjection</Title>
-    <Description>Overridable injections for Microsoft.Extensions.DependencyInjection</Description>
-    <PackageTags>overridable overriding dependency-injection di DependencyInjection proxy-pattern virtual-proxy service-provider service-collection extensions</PackageTags>
+    <Description>Override Microsoft.Extensions.DependencyInjection services per scope, including keyed and open-generic services, without changing root registrations.</Description>
+    <PackageTags>dependency-injection DependencyInjection scoped-services service-override keyed-services open-generics</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/OverridableDependencyInjection</PackageProjectUrl>
